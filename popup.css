@@ -287,6 +287,7 @@ body {
 
 .detail-wrapper {
     margin-top: 0%;
+    padding-top: 4px;
 }
 
 .summary-title {
@@ -350,8 +351,8 @@ body {
     display: flex;
     flex-direction: column;
     padding: 12px;
-    padding-top: 10px;
-    padding-bottom: 10px;
+    padding-top: 6px;
+    padding-bottom: 12px;
 }
 
 .detail-category-title {
