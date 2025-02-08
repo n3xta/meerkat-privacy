@@ -38,6 +38,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 saveOptions()
             });
 
+            document.getElementById("error-button").addEventListener("click", () => {
+                displayMain()
+            });
+
             document.getElementById("settings-button-r").addEventListener("click", () => {
                 displaySetup()
             });
@@ -73,44 +77,40 @@ document.addEventListener('DOMContentLoaded', function () {
             updateGradient()
 
             const startCrawlBtn = document.getElementById("start-crawl");
-            if (startCrawlBtn) {
-                startCrawlBtn.addEventListener("click", () => {
-                    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-                        const currentUrl = tabs[0].url;
-                        
-                        chrome.storage.local.get("options", (data) => {
-                            const userPreferences = data.options || [];
-                            displayLoading()
-                            fetch('http://64.227.2.159:5000/crawl_and_summarize', {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json'
-                                },
-                                body: JSON.stringify({
-                                    url: currentUrl,
-                                    preferences: userPreferences
-                                })
+            startCrawlBtn.addEventListener("click", () => {
+                chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+                    const currentUrl = tabs[0].url;
+
+                    chrome.storage.local.get("options", (data) => {
+                        const userPreferences = data.options || [];
+                        displayLoading()
+                        fetch('http://64.227.2.159:5000/crawl_and_summarize', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                url: currentUrl,
+                                preferences: userPreferences
                             })
+                        })
                             .then(response => response.json())
                             .then(data => {
                                 if (data.error) {
-                                    displayMain()
-                                    document.getElementById("chatgpt-content").innerText = "错误：" + data.error;
+                                    displayError()
+                                    document.getElementById("error-text").innerText = "There has been an error";
                                 } else {
                                     displayResults()
                                     document.getElementById("summary").innerText = data.summary;
                                 }
                             })
                             .catch(err => {
-                                displayMain()
-                                document.getElementById("chatgpt-content").innerText = "请求失败：" + err;
+                                displayError()
+                                document.getElementById("error-text").innerText = "There has been an error";
                             });
-                        });
                     });
-                });                
-            } else {
-                console.error("无法找到 id 为 'start-crawl' 的元素！");
-            }
+                });
+            });
         }
     );
 })
@@ -180,12 +180,22 @@ function expandSummary() {
 function displaySetup() {
     document.getElementById("setup-section").style.display = "flex"
     document.getElementById("loading-section").style.display = "none"
+    document.getElementById("error-section").style.display = "none"
     document.getElementById("result-section").style.display = "none"
     document.getElementById("main-section").style.display = "none"
 }
 
 function displayLoading() {
     document.getElementById("loading-section").style.display = "flex"
+    document.getElementById("error-section").style.display = "none"
+    document.getElementById("main-section").style.display = "none"
+    document.getElementById("setup-section").style.display = "none"
+    document.getElementById("result-section").style.display = "none"
+}
+
+function displayError() {
+    document.getElementById("error-section").style.display = "flex"
+    document.getElementById("loading-section").style.display = "none"
     document.getElementById("main-section").style.display = "none"
     document.getElementById("setup-section").style.display = "none"
     document.getElementById("result-section").style.display = "none"
@@ -196,11 +206,13 @@ function displayResults() {
     document.getElementById("main-section").style.display = "none"
     document.getElementById("setup-section").style.display = "none"
     document.getElementById("loading-section").style.display = "none"
+    document.getElementById("error-section").style.display = "none"
 }
 
 function displayMain() {
     document.getElementById("main-section").style.display = "flex"
     document.getElementById("setup-section").style.display = "none"
     document.getElementById("loading-section").style.display = "none"
+    document.getElementById("error-section").style.display = "none"
     document.getElementById("result-section").style.display = "none"
 }

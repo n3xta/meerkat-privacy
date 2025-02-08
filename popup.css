@@ -26,6 +26,7 @@ body {
 
 .setup-section,
 .loading-section,
+.error-section,
 .result-section,
 .main-section {
     display: flex;
@@ -35,6 +36,7 @@ body {
 
 .setup,
 .loading,
+.error,
 .result,
 .main {
     display: flex;
@@ -43,6 +45,7 @@ body {
 
 .setup-title,
 .loading-title,
+.error-title,
 .result-title,
 .main-title {
     color: var(--primary);
@@ -164,7 +167,7 @@ body {
     }
 }
 
-.settings-button {
+.primary-button {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -192,7 +195,7 @@ body {
 }
 
 @media (pointer: fine) {
-    .settings-button:hover {
+    .primary-button:hover {
         background-color: var(--light-background-1);
     }
 }
