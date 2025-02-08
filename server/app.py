@@ -11,7 +11,7 @@ def crawl():
     data = request.get_json()
     url = data.get('url')
     if not url:
-        return jsonify({'error': '未提供 URL'}), 400
+        return jsonify({'error': 'no URL'}), 400
 
     try:
         resp = requests.get(url, timeout=10)

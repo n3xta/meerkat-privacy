@@ -41,26 +41,6 @@ document.addEventListener('DOMContentLoaded', function () {
     );
 })
 
-document.getElementById("start-crawl").addEventListener("click", () => {
-    chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
-        const currentUrl = tabs[0].url;
-        fetch('http://localhost:5000/crawl', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ url: currentUrl })
-        })
-        .then(response => response.json())
-        .then(data => {
-            document.getElementById("crawl-result").innerText = data.text;
-        })
-        .catch(err => {
-            document.getElementById("crawl-result").innerText = '爬取出错：' + err;
-        });
-    });
-});
-
 function selectOption(option) {
     optionElement = document.getElementById(option)
     optionContent = optionElement.innerHTML
@@ -116,12 +96,64 @@ function displayMain() {
     
 }
 
-function displayCrawl() {
-    document.getElementById("crawl-section").style.display = "flex";
-    document.getElementById("main-section").style.display = "none";
-    document.getElementById("setup-section").style.display = "none";
-    document.getElementById("loading-section").style.display = "none";
-    document.getElementById("result-section").style.display = "none";
-}
-
-
+document.getElementById("start-crawl").addEventListener("click", () => {
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      const currentUrl = tabs[0].url;
+      fetch('http://127.0.0.1:5000/crawl', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ url: currentUrl })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.error) {
+          document.getElementById("crawl-result").innerText = '错误：' + data.error;
+        } else {
+          document.getElementById("crawl-result").innerText = data.text;
+          callChatGPT(data.text);
+        }
+      })
+      .catch(err => {
+        document.getElementById("crawl-result").innerText = '爬取出错：' + err;
+      });
+    });
+  });
+  
+  function callChatGPT(crawledText) {
+    const apiKey = "poopoo heads"; 
+  
+    const prompt = `请基于以下文本生成一份隐私条款报告，指出该网站是否存在侵犯用户隐私的风险，并列出关键点：\n\n${crawledText}`;
+  
+    fetch("https://api.openai.com/v1/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${apiKey}`
+      },
+      body: JSON.stringify({
+        model: "text-davinci-003",
+        prompt: prompt,
+        max_tokens: 500,
+        temperature: 0.7,
+        top_p: 1,
+        frequency_penalty: 0,
+        presence_penalty: 0
+      })
+    })
+    .then(response => response.json())
+    .then(data => {
+      let gptText = "";
+      if (data.choices && data.choices.length > 0) {
+        gptText = data.choices[0].text.trim();
+      } else {
+        gptText = "未生成报告，请重试。";
+      }
+      document.getElementById("chatgpt-content").innerText = gptText;
+    })
+    .catch(error => {
+      console.error("调用 ChatGPT API 出错：", error);
+      document.getElementById("chatgpt-content").innerText = "调用 ChatGPT API 出错：" + error;
+    });
+  }  
