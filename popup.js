@@ -96,12 +96,19 @@ document.addEventListener('DOMContentLoaded', function () {
                         })
                             .then(response => response.json())
                             .then(data => {
+                                console.log("Received data:", data);
                                 if (data.error) {
                                     displayError()
                                     document.getElementById("error-text").innerText = "There has been an error";
                                 } else {
                                     displayResults()
                                     document.getElementById("summary").innerText = data.summary;
+                                    console.log("Overall:", data.overall);
+                                    console.log("User Tracking Score:", data.subscore_user);
+                                    console.log("Data Security Score:", data.subscore_data);
+                                    console.log("Network Surveillance Score:", data.subscore_network);
+                                    console.log("Ads Score:", data.subscore_ads);
+                                    console.log("Quote:", data.quote);
                                 }
                             })
                             .catch(err => {
