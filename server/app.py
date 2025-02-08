@@ -2,11 +2,12 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS, cross_origin
 import requests
 from bs4 import BeautifulSoup
+import re
 
 app = Flask(__name__)
 CORS(app)
 
-### OpenAI API and project id
+### key and id here
 OPENAI_URL = "https://api.openai.com/v1/chat/completions"
 
 @app.route('/crawl_and_summarize', methods=['POST', 'OPTIONS'])
@@ -27,23 +28,25 @@ def crawl_and_summarize():
         return jsonify({'error': str(e)}), 500
 
     soup = BeautifulSoup(resp.text, 'html.parser')
-    crawled_text = soup.get_text(separator='\n').strip()
-    # return jsonify({'text': text})
+    for tag in soup(["script", "style", "header", "footer", "nav", "aside"]):
+        tag.decompose()
+    raw_text = soup.get_text(separator='\n').strip()
+    crawled_text = re.sub(r'\s+', ' ', raw_text)
 
     messages = [
         {
             "role": "system",
-            "content": "你是一名专业法律分析助手，请阅读以下服务条款，并以200字的精炼总结保留最重要的信息，尤其关注用户隐私相关的部分，同时警告用户可能存在的数据泄露风险。请对隐私风险进行评分（0分为非常不安全，10分为非常安全）。"
+            "content": "You are a professional legal analysis assistant. Please read the following terms of service and provide a 200-word concise summary, highlighting the most important information, with a particular focus on user privacy. Additionally, warn users about potential data leakage risks and provide a privacy risk rating (0 being very unsafe, 10 being very secure)."
         },
         {
             "role": "user",
-            "content": f"请总结以下网站的服务条款，保留所有关键点，特别关注涉及用户数据收集、存储、共享或隐私相关的内容：\n\n{crawled_text}"
+            "content": f"Please summarize the website’s terms of service, ensuring that all key points are retained, especially those related to user data collection, storage, sharing, or privacy policies: \n\n{crawled_text}"
         }
     ]
 
     try:
         response = requests.post(OPENAI_URL, json={
-            "model": "gpt-4o",
+            "model": "gpt-4o-mini",
             "messages": messages,
             "temperature": 0,
             "max_tokens": 300
