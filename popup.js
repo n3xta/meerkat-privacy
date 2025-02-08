@@ -1,6 +1,12 @@
 var setupList = []
 var firstSetup = true
 
+var section1GradientValue = 0
+var section2GradientValue = 0
+var section3GradientValue = 0
+var section4GradientValue = 0
+var section5GradientValue = 0
+
 document.addEventListener('DOMContentLoaded', function () {
 
     chrome.storage.local.get({
@@ -13,12 +19,22 @@ document.addEventListener('DOMContentLoaded', function () {
 
             setupOptions = document.querySelectorAll(".setup-option")
             setupOptions.forEach((option) => {
+                var sectionNumber = 1
+                if (option.classList.contains("so-1")) {
+                    sectionNumber = 1
+                } else if (option.classList.contains("so-2")) {
+                    sectionNumber = 2
+                } else if (option.classList.contains("so-3")) {
+                    sectionNumber = 3
+                } else if (option.classList.contains("so-4")) {
+                    sectionNumber = 4
+                } else if (option.classList.contains("so-5")) {
+                    sectionNumber = 5
+                }
                 option.addEventListener("click", () => {
-                    selectOption(option.id)
+                    selectOption(option.id, sectionNumber)
                 });
             })
-
-            document.getElementById("confirm-button-spacer").style.marginTop = document.getElementById("confirm-button-wrapper").clientHeight + "px"
 
             document.getElementById("confirm-button").addEventListener("click", () => {
                 saveOptions()
@@ -28,30 +44,75 @@ document.addEventListener('DOMContentLoaded', function () {
                 displaySetup()
             });
 
+            document.getElementById("summary-expand-button").addEventListener("click", () => {
+                expandSummary()
+            });
+
             setupList.forEach((element) => {
-                document.getElementById(element).classList.add("setup-option-selected")
+                var currentElement = document.getElementById(element)
+                currentElement.classList.add("setup-option-selected")
+                if (currentElement.classList.contains("so-1")) {
+                    section1GradientValue += 1
+                } else if (currentElement.classList.contains("so-2")) {
+                    section2GradientValue += 1
+                } else if (currentElement.classList.contains("so-3")) {
+                    section3GradientValue += 1
+                } else if (currentElement.classList.contains("so-4")) {
+                    section4GradientValue += 1
+                } else if (currentElement.classList.contains("so-5")) {
+                    section5GradientValue += 1
+                }
             })
 
             if (firstSetup) {
                 displaySetup()
             } else {
-                displayMain()
+                displayResults()
             }
+
+            updateGradient()
         }
     );
 })
 
-function selectOption(option) {
+function updateGradient() {
+    document.documentElement.style.setProperty("--gradient-1", 100 - section1GradientValue / 3 * 100 + "%")
+    document.documentElement.style.setProperty("--gradient-2", 100 - section2GradientValue / 4 * 100 + "%")
+    document.documentElement.style.setProperty("--gradient-3", 100 - section3GradientValue / 3 * 100 + "%")
+    document.documentElement.style.setProperty("--gradient-4", 100 - section4GradientValue / 3 * 100 + "%")
+    document.documentElement.style.setProperty("--gradient-5", 100 - section5GradientValue / 3 * 100 + "%")
+}
+
+function selectOption(option, sectionNumber) {
     optionElement = document.getElementById(option)
     optionContent = optionElement.innerHTML
+
+    delta = 0
+
     if (setupList.includes(option)) {
         const index = setupList.indexOf(option);
         setupList.splice(index, 1);
         optionElement.classList.remove("setup-option-selected")
+        delta = -1
     } else {
         setupList.push(option)
         optionElement.classList.add("setup-option-selected")
+        delta = 1
     }
+
+    if (sectionNumber == 1) {
+        section1GradientValue += delta
+    } else if (sectionNumber == 2) {
+        section2GradientValue += delta
+    } else if (sectionNumber == 3) {
+        section3GradientValue += delta
+    } else if (sectionNumber == 4) {
+        section4GradientValue += delta
+    } else if (sectionNumber == 5) {
+        section5GradientValue += delta
+    }
+
+    updateGradient()
 }
 
 function saveOptions() {
@@ -65,6 +126,15 @@ function saveOptions() {
         document.getElementById("confirm-button").innerHTML = "Confirm"
         displayMain()
     });
+}
+
+function expandSummary() {
+    summaryText = document.getElementById("summary")
+    if (summaryText.style.display != "block") {
+        summaryText.style.display = "block"
+    } else {
+        summaryText.style.display = "-webkit-box"
+    }
 }
 
 function displaySetup() {
@@ -92,37 +162,36 @@ function displayMain() {
     document.getElementById("main-section").style.display = "flex"
     document.getElementById("setup-section").style.display = "none"
     document.getElementById("loading-section").style.display = "none"
-    document.getElementById("result-section").style.display = "flex"
-    
+    document.getElementById("result-section").style.display = "none"
 }
 
 document.addEventListener("DOMContentLoaded", function() {
-  const startCrawlBtn = document.getElementById("start-crawl");
-  if (startCrawlBtn) {
-    startCrawlBtn.addEventListener("click", () => {
-      chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-        const currentUrl = tabs[0].url;
-        fetch('http://64.227.2.159:5000/crawl_and_summarize', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ url: currentUrl })
-        })
-        .then(response => response.json())
-        .then(data => {
-          if (data.error) {
-            document.getElementById("chatgpt-content").innerText = "错误：" + data.error;
-          } else {
-            document.getElementById("chatgpt-content").innerText = data.summary;
-          }
-        })
-        .catch(err => {
-          document.getElementById("chatgpt-content").innerText = "请求失败：" + err;
+    const startCrawlBtn = document.getElementById("start-crawl");
+    if (startCrawlBtn) {
+      startCrawlBtn.addEventListener("click", () => {
+        chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+          const currentUrl = tabs[0].url;
+          fetch('http://64.227.2.159:5000/crawl_and_summarize', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ url: currentUrl })
+          })
+          .then(response => response.json())
+          .then(data => {
+            if (data.error) {
+              document.getElementById("chatgpt-content").innerText = "错误：" + data.error;
+            } else {
+              document.getElementById("chatgpt-content").innerText = data.summary;
+            }
+          })
+          .catch(err => {
+            document.getElementById("chatgpt-content").innerText = "请求失败：" + err;
+          });
         });
       });
-    });
-  } else {
-    console.error("无法找到 id 为 'start-crawl' 的元素！");
-  }
-});
+    } else {
+      console.error("无法找到 id 为 'start-crawl' 的元素！");
+    }
+  });
