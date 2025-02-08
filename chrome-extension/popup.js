@@ -41,6 +41,26 @@ document.addEventListener('DOMContentLoaded', function () {
     );
 })
 
+document.getElementById("start-crawl").addEventListener("click", () => {
+    chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
+        const currentUrl = tabs[0].url;
+        fetch('http://localhost:5000/crawl', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ url: currentUrl })
+        })
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById("crawl-result").innerText = data.text;
+        })
+        .catch(err => {
+            document.getElementById("crawl-result").innerText = '爬取出错：' + err;
+        });
+    });
+});
+
 function selectOption(option) {
     optionElement = document.getElementById(option)
     optionContent = optionElement.innerHTML
@@ -93,4 +113,15 @@ function displayMain() {
     document.getElementById("setup-section").style.display = "none"
     document.getElementById("loading-section").style.display = "none"
     document.getElementById("result-section").style.display = "none"
+    
 }
+
+function displayCrawl() {
+    document.getElementById("crawl-section").style.display = "flex";
+    document.getElementById("main-section").style.display = "none";
+    document.getElementById("setup-section").style.display = "none";
+    document.getElementById("loading-section").style.display = "none";
+    document.getElementById("result-section").style.display = "none";
+}
+
+
