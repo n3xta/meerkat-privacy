@@ -1,5 +1,7 @@
 var setupList = []
+var oldSetupList = []
 var firstSetup = true
+var hasResult = false
 
 var section1GradientValue = 0
 var section2GradientValue = 0
@@ -81,6 +83,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
                     const tabURL = tabs[0].url;
                     if (data.url == tabURL) {
+                        hasResult = true
                         displayResults()
                         // document.getElementById("result-quote").innerText = data.quote;
                         document.getElementById("result-summary").innerText = data.summary;
@@ -102,6 +105,8 @@ document.addEventListener('DOMContentLoaded', function () {
                         displayMain()
                     }
                 })
+            } else {
+                displayMain()
             }
 
             const startCrawlBtn = document.getElementById("start-crawl");
@@ -132,7 +137,7 @@ document.addEventListener('DOMContentLoaded', function () {
                                     displayResults()
                                     // document.getElementById("result-quote").innerText = data.quote;
                                     document.getElementById("result-summary").innerText = data.summary;
-                                    
+
                                     var totalScore = calculateTotalScore(data.subscore_user, data.subscore_data, data.subscore_network, data.subscore_ads);
                                     document.getElementById("result-overall").innerText = totalScore
                                     document.documentElement.style.setProperty("--overall", totalScore * 10)
@@ -173,19 +178,19 @@ function calculateTotalScore(subScore1, subScore2, subScore3, subScore4) {
     var totalScore = 0
     var totalCategory = section1GradientValue + section2GradientValue + section3GradientValue + section4GradientValue
     if (totalCategory == 0) {
-        totalScore += subScore1 * 1/4
-        totalScore += subScore2 * 1/4
-        totalScore += subScore3 * 1/4
-        totalScore += subScore4 * 1/4
+        totalScore += subScore1 * 1 / 4
+        totalScore += subScore2 * 1 / 4
+        totalScore += subScore3 * 1 / 4
+        totalScore += subScore4 * 1 / 4
     } else {
-        totalScore += subScore1 * section1GradientValue/totalCategory
-        totalScore += subScore2 * section2GradientValue/totalCategory
-        totalScore += subScore3 * section3GradientValue/totalCategory
-        totalScore += subScore4 * section4GradientValue/totalCategory
+        totalScore += subScore1 * section1GradientValue / totalCategory
+        totalScore += subScore2 * section2GradientValue / totalCategory
+        totalScore += subScore3 * section3GradientValue / totalCategory
+        totalScore += subScore4 * section4GradientValue / totalCategory
     }
 
     return Math.round(totalScore)
-} 
+}
 
 function updateGradient() {
     document.documentElement.style.setProperty("--gradient-1", 100 - section1GradientValue / 3 * 100 + "%")
@@ -226,15 +231,32 @@ function selectOption(option, sectionNumber) {
 
 function saveOptions() {
     document.getElementById("confirm-button").innerHTML = "Saving..."
-
     firstSetup = false
-    chrome.storage.local.set({
-        options: setupList,
-        firstSetup: firstSetup
-    }, function () {
-        document.getElementById("confirm-button").innerHTML = "Confirm"
-        displayMain()
-    });
+
+    if (setupList.toString() != oldSetupList.toString()) {
+        chrome.storage.local.set({
+            options: setupList,
+            firstSetup: firstSetup,
+            url: "",
+            overallScore: 0,
+            summary: "",
+            subScores: []
+        }, function () {
+            document.getElementById("confirm-button").innerHTML = "Confirm"
+            displayMain()
+        });
+    } else {
+        chrome.storage.local.set({
+            firstSetup: firstSetup
+        }, function () {
+            document.getElementById("confirm-button").innerHTML = "Confirm"
+            if (hasResult) {
+                displayResults()
+            } else {
+                displayMain()
+            }
+        });
+    }
 }
 
 function expandSummary() {
@@ -250,6 +272,9 @@ function expandSummary() {
 }
 
 function displaySetup() {
+    setupList.forEach((option) => {
+        oldSetupList.push(option)
+    })
     document.getElementById("setup-section").style.display = "flex"
     document.getElementById("loading-section").style.display = "none"
     document.getElementById("error-section").style.display = "none"
