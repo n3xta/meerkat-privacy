@@ -80,7 +80,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         
                         chrome.storage.local.get("options", (data) => {
                             const userPreferences = data.options || [];
-                
+                            displayLoading()
                             fetch('http://64.227.2.159:5000/crawl_and_summarize', {
                                 method: 'POST',
                                 headers: {
@@ -94,6 +94,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             .then(response => response.json())
                             .then(data => {
                                 if (data.error) {
+                                    displayMain()
                                     document.getElementById("chatgpt-content").innerText = "错误：" + data.error;
                                 } else {
                                     displayResults()
@@ -101,6 +102,7 @@ document.addEventListener('DOMContentLoaded', function () {
                                 }
                             })
                             .catch(err => {
+                                displayMain()
                                 document.getElementById("chatgpt-content").innerText = "请求失败：" + err;
                             });
                         });
