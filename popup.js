@@ -10,9 +10,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
     chrome.storage.local.get({
         options: [],
-        firstSetup: true
+        firstSetup: true,
+        url: "",
+        overallScore: 0,
+        summary: "",
+        subScores: []
     },
         function (data) {
+
             setupList = data.options
             firstSetup = data.firstSetup
 
@@ -68,13 +73,36 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             })
 
+            updateGradient()
+
             if (firstSetup) {
                 displaySetup()
-            } else {
-                displayMain()
-            }
+            } else if (data.url != "") {
+                chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+                    const tabURL = tabs[0].url;
+                    if (data.url == tabURL) {
+                        displayResults()
+                        // document.getElementById("result-quote").innerText = data.quote;
+                        document.getElementById("result-summary").innerText = data.summary;
+                        document.getElementById("result-overall").innerText = data.overallScore;
+                        document.documentElement.style.setProperty("--overall", data.overallScore * 10)
 
-            updateGradient()
+                        document.getElementById("result-sub-1").innerText = data.subScores[0];
+                        document.documentElement.style.setProperty("--bar-score-1", data.subScores[0] * 10 + "%")
+
+                        document.getElementById("result-sub-2").innerText = data.subScores[1];
+                        document.documentElement.style.setProperty("--bar-score-2", data.subScores[1] * 10 + "%")
+
+                        document.getElementById("result-sub-3").innerText = data.subScores[2];
+                        document.documentElement.style.setProperty("--bar-score-3", data.subScores[2] * 10 + "%")
+
+                        document.getElementById("result-sub-4").innerText = data.subScores[3];
+                        document.documentElement.style.setProperty("--bar-score-4", data.subScores[3] * 10 + "%")
+                    } else {
+                        displayMain()
+                    }
+                })
+            }
 
             const startCrawlBtn = document.getElementById("start-crawl");
             startCrawlBtn.addEventListener("click", () => {
@@ -102,13 +130,32 @@ document.addEventListener('DOMContentLoaded', function () {
                                     document.getElementById("error-text").innerText = "There has been an error";
                                 } else {
                                     displayResults()
-                                    document.getElementById("summary").innerText = data.summary;
-                                    console.log("Overall:", data.overall);
-                                    console.log("User Tracking Score:", data.subscore_user);
-                                    console.log("Data Security Score:", data.subscore_data);
-                                    console.log("Network Surveillance Score:", data.subscore_network);
-                                    console.log("Ads Score:", data.subscore_ads);
-                                    console.log("Quote:", data.quote);
+                                    // document.getElementById("result-quote").innerText = data.quote;
+                                    document.getElementById("result-summary").innerText = data.summary;
+                                    
+                                    var totalScore = calculateTotalScore(data.subscore_user, data.subscore_data, data.subscore_network, data.subscore_ads);
+                                    document.getElementById("result-overall").innerText = totalScore
+                                    document.documentElement.style.setProperty("--overall", totalScore * 10)
+
+                                    document.getElementById("result-sub-1").innerText = data.subscore_user;
+                                    document.documentElement.style.setProperty("--bar-score-1", data.subscore_user * 10 + "%")
+
+                                    document.getElementById("result-sub-2").innerText = data.subscore_data;
+                                    document.documentElement.style.setProperty("--bar-score-2", data.subscore_data * 10 + "%")
+
+                                    document.getElementById("result-sub-3").innerText = data.subscore_network;
+                                    document.documentElement.style.setProperty("--bar-score-3", data.subscore_network * 10 + "%")
+
+                                    document.getElementById("result-sub-4").innerText = data.subscore_ads;
+                                    document.documentElement.style.setProperty("--bar-score-4", data.subscore_ads * 10 + "%")
+
+                                    chrome.storage.local.set({
+                                        url: currentUrl,
+                                        overallScore: totalScore,
+                                        summary: data.summary,
+                                        subScores: [data.subscore_user, data.subscore_data, data.subscore_network, data.subscore_ads]
+                                    }, function () {
+                                    });
                                 }
                             })
                             .catch(err => {
@@ -121,6 +168,24 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     );
 })
+
+function calculateTotalScore(subScore1, subScore2, subScore3, subScore4) {
+    var totalScore = 0
+    var totalCategory = section1GradientValue + section2GradientValue + section3GradientValue + section4GradientValue
+    if (totalCategory == 0) {
+        totalScore += subScore1 * 1/4
+        totalScore += subScore2 * 1/4
+        totalScore += subScore3 * 1/4
+        totalScore += subScore4 * 1/4
+    } else {
+        totalScore += subScore1 * section1GradientValue/totalCategory
+        totalScore += subScore2 * section2GradientValue/totalCategory
+        totalScore += subScore3 * section3GradientValue/totalCategory
+        totalScore += subScore4 * section4GradientValue/totalCategory
+    }
+
+    return Math.round(totalScore)
+} 
 
 function updateGradient() {
     document.documentElement.style.setProperty("--gradient-1", 100 - section1GradientValue / 3 * 100 + "%")
@@ -173,7 +238,7 @@ function saveOptions() {
 }
 
 function expandSummary() {
-    summaryText = document.getElementById("summary")
+    summaryText = document.getElementById("result-summary")
     expandIcon = document.getElementById("expand-icon")
     if (summaryText.style.display != "block") {
         summaryText.style.display = "block"

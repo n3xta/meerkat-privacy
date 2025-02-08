@@ -17,7 +17,11 @@
     --light-background-1: rgb(245, 245, 246);
     --light-background-2: rgb(250, 250, 251);
 
-    --progress: 50;
+    --overall: 0;
+    --bar-score-1: 0%;
+    --bar-score-2: 0%;
+    --bar-score-3: 0%;
+    --bar-score-4: 0%;
 }
 
 body {
@@ -235,7 +239,7 @@ body {
     --stroke-width: 12px;
     --radius: calc((var(--size) - var(--stroke-width)) / 2);
     --circumference: calc(var(--radius) * pi * 2);
-    --dash: calc((var(--progress) * var(--circumference)) / 100);
+    --dash: calc((var(--overall) * var(--circumference)) / 100);
 
     position: absolute;
 }
@@ -257,7 +261,7 @@ body {
     transform: rotate(-90deg);
     transform-origin: var(--half-size) var(--half-size);
     stroke-dasharray: var(--dash) calc(var(--circumference) - var(--dash));
-    transition: stroke-dasharray 0.3s linear 0s;
+    transition: stroke-dasharray 0.75s ease-in-out;
     stroke: var(--tint);
 }
 
@@ -416,9 +420,9 @@ body {
 }
 
 .bar-score-fg {
-    width: 50%;
     height: 8px;
     border-radius: 4px;
+    transition: width 0.75s ease-in-out;
 
     background-color: var(--tint);
 }
