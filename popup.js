@@ -77,13 +77,20 @@ document.addEventListener('DOMContentLoaded', function () {
                 startCrawlBtn.addEventListener("click", () => {
                     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
                         const currentUrl = tabs[0].url;
-                        fetch('http://64.227.2.159:5000/crawl_and_summarize', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify({ url: currentUrl })
-                        })
+                        
+                        chrome.storage.local.get("options", (data) => {
+                            const userPreferences = data.options || [];
+                
+                            fetch('http://64.227.2.159:5000/crawl_and_summarize', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({
+                                    url: currentUrl,
+                                    preferences: userPreferences
+                                })
+                            })
                             .then(response => response.json())
                             .then(data => {
                                 if (data.error) {
@@ -95,8 +102,9 @@ document.addEventListener('DOMContentLoaded', function () {
                             .catch(err => {
                                 document.getElementById("chatgpt-content").innerText = "请求失败：" + err;
                             });
+                        });
                     });
-                });
+                });                
             } else {
                 console.error("无法找到 id 为 'start-crawl' 的元素！");
             }
