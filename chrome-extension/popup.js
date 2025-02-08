@@ -102,7 +102,7 @@ document.addEventListener("DOMContentLoaded", function() {
     startCrawlBtn.addEventListener("click", () => {
       chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
         const currentUrl = tabs[0].url;
-        fetch('http://127.0.0.1:5000/crawl_and_summarize', {
+        fetch('http://64.227.2.159:5000/crawl_and_summarize', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
