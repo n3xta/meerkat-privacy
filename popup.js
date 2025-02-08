@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 } else if (option.classList.contains("so-4")) {
                     sectionNumber = 4
                 }
-                
+
                 option.addEventListener("click", () => {
                     selectOption(option.id, sectionNumber)
                 });
@@ -67,7 +67,7 @@ document.addEventListener('DOMContentLoaded', function () {
             if (firstSetup) {
                 displaySetup()
             } else {
-                displayResults()
+                displayMain()
             }
 
             updateGradient()
@@ -75,7 +75,6 @@ document.addEventListener('DOMContentLoaded', function () {
             const startCrawlBtn = document.getElementById("start-crawl");
             if (startCrawlBtn) {
                 startCrawlBtn.addEventListener("click", () => {
-                    console.log(1)
                     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
                         const currentUrl = tabs[0].url;
                         
@@ -97,7 +96,8 @@ document.addEventListener('DOMContentLoaded', function () {
                                 if (data.error) {
                                     document.getElementById("chatgpt-content").innerText = "错误：" + data.error;
                                 } else {
-                                    document.getElementById("chatgpt-content").innerText = data.summary;
+                                    displayResults()
+                                    document.getElementById("summary").innerText = data.summary;
                                 }
                             })
                             .catch(err => {
