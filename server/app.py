@@ -1,17 +1,20 @@
 from flask import Flask, request, jsonify
-from flask_cors import CORS
+from flask_cors import CORS, cross_origin
 import requests
 from bs4 import BeautifulSoup
 
 app = Flask(__name__)
 CORS(app)
 
-API_KEY = "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"
-PROJECT_ID = "proj_DVtBv2QYssveAEGFATcd2zKV"
+### OpenAI API and project id
 OPENAI_URL = "https://api.openai.com/v1/chat/completions"
 
-@app.route('/crawl_and_summarize', methods=['POST'])
+@app.route('/crawl_and_summarize', methods=['POST', 'OPTIONS'])
+@cross_origin()
 def crawl_and_summarize():
+    if request.method == 'OPTIONS':
+        return jsonify({}), 200
+
     data = request.get_json()
     url = data.get('url')
     if not url:

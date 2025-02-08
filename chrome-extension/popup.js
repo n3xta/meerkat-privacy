@@ -92,30 +92,37 @@ function displayMain() {
     document.getElementById("main-section").style.display = "flex"
     document.getElementById("setup-section").style.display = "none"
     document.getElementById("loading-section").style.display = "none"
-    document.getElementById("result-section").style.display = "none"
+    document.getElementById("result-section").style.display = "flex"
     
 }
 
-document.getElementById("start-crawl").addEventListener("click", () => {
-  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-      const currentUrl = tabs[0].url;
-      fetch('http://127.0.0.1:5000/crawl_and_summarize', {
+document.addEventListener("DOMContentLoaded", function() {
+  const startCrawlBtn = document.getElementById("start-crawl");
+  if (startCrawlBtn) {
+    startCrawlBtn.addEventListener("click", () => {
+      chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+        const currentUrl = tabs[0].url;
+        fetch('http://127.0.0.1:5000/crawl_and_summarize', {
           method: 'POST',
           headers: {
-              'Content-Type': 'application/json'
+            'Content-Type': 'application/json'
           },
           body: JSON.stringify({ url: currentUrl })
-      })
-      .then(response => response.json())
-      .then(data => {
+        })
+        .then(response => response.json())
+        .then(data => {
           if (data.error) {
-              document.getElementById("chatgpt-content").innerText = "错误：" + data.error;
+            document.getElementById("chatgpt-content").innerText = "错误：" + data.error;
           } else {
-              document.getElementById("chatgpt-content").innerText = data.summary;
+            document.getElementById("chatgpt-content").innerText = data.summary;
           }
-      })
-      .catch(err => {
+        })
+        .catch(err => {
           document.getElementById("chatgpt-content").innerText = "请求失败：" + err;
+        });
       });
-  });
+    });
+  } else {
+    console.error("无法找到 id 为 'start-crawl' 的元素！");
+  }
 });
