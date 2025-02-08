@@ -40,7 +40,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 saveOptions()
             });
 
-            document.getElementById("settings-button").addEventListener("click", () => {
+            document.getElementById("settings-button-r").addEventListener("click", () => {
+                displaySetup()
+            });
+
+            document.getElementById("settings-button-m").addEventListener("click", () => {
                 displaySetup()
             });
 
