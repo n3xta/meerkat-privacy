@@ -71,6 +71,35 @@ document.addEventListener('DOMContentLoaded', function () {
             }
 
             updateGradient()
+
+            const startCrawlBtn = document.getElementById("start-crawl");
+            if (startCrawlBtn) {
+                startCrawlBtn.addEventListener("click", () => {
+                    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+                        const currentUrl = tabs[0].url;
+                        fetch('http://64.227.2.159:5000/crawl_and_summarize', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ url: currentUrl })
+                        })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.error) {
+                                    document.getElementById("chatgpt-content").innerText = "错误：" + data.error;
+                                } else {
+                                    document.getElementById("chatgpt-content").innerText = data.summary;
+                                }
+                            })
+                            .catch(err => {
+                                document.getElementById("chatgpt-content").innerText = "请求失败：" + err;
+                            });
+                    });
+                });
+            } else {
+                console.error("无法找到 id 为 'start-crawl' 的元素！");
+            }
         }
     );
 })
@@ -164,34 +193,3 @@ function displayMain() {
     document.getElementById("loading-section").style.display = "none"
     document.getElementById("result-section").style.display = "none"
 }
-
-document.addEventListener("DOMContentLoaded", function() {
-    const startCrawlBtn = document.getElementById("start-crawl");
-    if (startCrawlBtn) {
-      startCrawlBtn.addEventListener("click", () => {
-        chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-          const currentUrl = tabs[0].url;
-          fetch('http://64.227.2.159:5000/crawl_and_summarize', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ url: currentUrl })
-          })
-          .then(response => response.json())
-          .then(data => {
-            if (data.error) {
-              document.getElementById("chatgpt-content").innerText = "错误：" + data.error;
-            } else {
-              document.getElementById("chatgpt-content").innerText = data.summary;
-            }
-          })
-          .catch(err => {
-            document.getElementById("chatgpt-content").innerText = "请求失败：" + err;
-          });
-        });
-      });
-    } else {
-      console.error("无法找到 id 为 'start-crawl' 的元素！");
-    }
-  });
