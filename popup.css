@@ -1,6 +1,6 @@
 @font-face {
     font-family: 'Jost';
-    src: url('jost.ttf') format('truetype');
+    src: url('assets/jost.ttf') format('truetype');
 }
 
 :root {
