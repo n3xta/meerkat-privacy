@@ -5,7 +5,6 @@ var section1GradientValue = 0
 var section2GradientValue = 0
 var section3GradientValue = 0
 var section4GradientValue = 0
-var section5GradientValue = 0
 
 document.addEventListener('DOMContentLoaded', function () {
 
@@ -28,9 +27,8 @@ document.addEventListener('DOMContentLoaded', function () {
                     sectionNumber = 3
                 } else if (option.classList.contains("so-4")) {
                     sectionNumber = 4
-                } else if (option.classList.contains("so-5")) {
-                    sectionNumber = 5
                 }
+                
                 option.addEventListener("click", () => {
                     selectOption(option.id, sectionNumber)
                 });
@@ -63,8 +61,6 @@ document.addEventListener('DOMContentLoaded', function () {
                     section3GradientValue += 1
                 } else if (currentElement.classList.contains("so-4")) {
                     section4GradientValue += 1
-                } else if (currentElement.classList.contains("so-5")) {
-                    section5GradientValue += 1
                 }
             })
 
@@ -119,10 +115,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
 function updateGradient() {
     document.documentElement.style.setProperty("--gradient-1", 100 - section1GradientValue / 3 * 100 + "%")
-    document.documentElement.style.setProperty("--gradient-2", 100 - section2GradientValue / 4 * 100 + "%")
+    document.documentElement.style.setProperty("--gradient-2", 100 - section2GradientValue / 3 * 100 + "%")
     document.documentElement.style.setProperty("--gradient-3", 100 - section3GradientValue / 3 * 100 + "%")
     document.documentElement.style.setProperty("--gradient-4", 100 - section4GradientValue / 3 * 100 + "%")
-    document.documentElement.style.setProperty("--gradient-5", 100 - section5GradientValue / 3 * 100 + "%")
 }
 
 function selectOption(option, sectionNumber) {
@@ -150,8 +145,6 @@ function selectOption(option, sectionNumber) {
         section3GradientValue += delta
     } else if (sectionNumber == 4) {
         section4GradientValue += delta
-    } else if (sectionNumber == 5) {
-        section5GradientValue += delta
     }
 
     updateGradient()

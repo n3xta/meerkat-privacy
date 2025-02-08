@@ -5,7 +5,7 @@
 
 :root {
     --tint: rgb(124, 65, 241);
-    --tint-background: rgb(210, 187, 255);
+    --tint-background: rgb(223, 207, 255);
 
     --primary: black;
     --primary-invert: white;
@@ -207,6 +207,7 @@ body {
 }
 
 .result-top-title {
+    color: var(--primary);
     padding: 20px;
     padding-left: 10px;
     text-align: right;
@@ -314,6 +315,7 @@ body {
 }
 
 .summary-title-text {
+    color: var(--primary);
     line-height: 100%;
     font-size: 20px;
     font-weight: 500;
