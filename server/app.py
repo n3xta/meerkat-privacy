@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify
-from flask_cors import CORS  # 允许跨域请求
+from flask_cors import CORS
 import requests
 from bs4 import BeautifulSoup
 
