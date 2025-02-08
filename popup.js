@@ -75,6 +75,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const startCrawlBtn = document.getElementById("start-crawl");
             if (startCrawlBtn) {
                 startCrawlBtn.addEventListener("click", () => {
+                    console.log(1)
                     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
                         const currentUrl = tabs[0].url;
                         
@@ -167,10 +168,13 @@ function saveOptions() {
 
 function expandSummary() {
     summaryText = document.getElementById("summary")
+    expandIcon = document.getElementById("expand-icon")
     if (summaryText.style.display != "block") {
         summaryText.style.display = "block"
+        expandIcon.style.transform = "rotate(180deg)"
     } else {
         summaryText.style.display = "-webkit-box"
+        expandIcon.style.transform = "rotate(0deg)"
     }
 }
 

@@ -113,23 +113,27 @@
 
     <div class="result-section" id="result-section">
         <div class="result">
-            <div class="circular-score-wrapper">
-                <svg width="120" height="120" viewBox="0 0 120 120" class="circular-score">
-                    <circle class="bg"></circle>
-                    <circle class="fg"></circle>
-                </svg>
-                <div class="circular-score-text-wrapper">
-                    <div class="circular-score-text" id="circular-score-text">10
-                        <div class="circular-score-text-secondary">/10</div>
+            <div class="result-top-wrapper">
+                <div class="circular-score-wrapper">
+                    <svg width="120" height="120" viewBox="0 0 120 120" class="circular-score">
+                        <circle class="bg"></circle>
+                        <circle class="fg"></circle>
+                    </svg>
+                    <div class="circular-score-text-wrapper">
+                        <div class="circular-score-text" id="circular-score-text">10
+                            <div class="circular-score-text-secondary">/10</div>
+                        </div>
                     </div>
                 </div>
+                <div class="result-top-title">This website seems nice</div>
             </div>
 
             <div class="summary-wrapper">
                 <div class="summary-title">
                     <div class="summary-title-text">Here's what we found</div>
                     <button class="summary-expand-button" id="summary-expand-button">
-                        <svg class="expand-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10.38 5.96">
+                        <svg class="expand-icon" id="expand-icon" xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 10.38 5.96">
                             <g id="Layer_1-2" data-name="Layer_1">
                                 <path
                                     d="M4.66,5.73L.2,1.17c-.07-.06-.12-.13-.15-.21s-.05-.17-.05-.26c0-.13.03-.25.09-.35s.14-.19.24-.25.22-.09.35-.09c.19,0,.35.07.49.21l4.31,4.41h-.57L9.21.21c.14-.14.3-.21.49-.21.13,0,.24.03.35.09s.18.14.24.25.09.22.09.35c0,.18-.07.34-.2.47l-4.46,4.56c-.07.08-.16.14-.25.18s-.19.06-.29.06c-.2,0-.37-.08-.53-.23Z" />
@@ -196,11 +200,13 @@
             </div>
 
             <button id="start-crawl">开始爬取</button>
-                <div id="crawl-result"></div>
-                <div id="chatgpt-result" style="margin-top:20px; border-top: 1px solid #ccc; padding-top:10px;">
-                    <h2>隐私报告</h2>
-                    <div id="chatgpt-content"></div>
-                </div>
+            <div id="crawl-result"></div>
+            <div id="chatgpt-result" style="margin-top:20px; border-top: 1px solid #ccc; padding-top:10px;">
+                <h2>隐私报告</h2>
+                <div id="chatgpt-content"></div>
+            </div>
+
+            <button class="settings-button" id="settings-button">Your Preferences</button>
         </div>
     </div>
 

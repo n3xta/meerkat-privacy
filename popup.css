@@ -200,11 +200,27 @@ body {
 
 /* Circular Score Display */
 
+.result-top-wrapper {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+}
+
+.result-top-title {
+    padding: 20px;
+    padding-left: 10px;
+    text-align: right;
+    line-height: 120%;
+    font-size: 25px;
+    font-weight: 500;
+    font-family: Jost, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
 .circular-score-wrapper {
     margin: 15px;
-    margin-right: auto;
     width: 120px;
     height: 120px;
+    min-width: 120px;
 
     position: relative;
 }
@@ -258,6 +274,7 @@ body {
 .circular-score-text {
     display: flex;
 
+    user-select: none;
     font-size: 40px;
     font-weight: 600;
     font-family: Jost, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
@@ -328,6 +345,7 @@ body {
     height: 8px;
     overflow: visible;
     fill: var(--secondary-gray);
+    transition: transform 0.25s ease-in-out;
 }
 
 .summary {
@@ -369,6 +387,7 @@ body {
 }
 
 .detail-category-score {
+    user-select: none;
     display: flex;
     color: var(--tint);
 }
