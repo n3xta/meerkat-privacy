@@ -85,10 +85,20 @@ document.addEventListener('DOMContentLoaded', function () {
                     if (data.url == tabURL) {
                         hasResult = true
                         displayResults()
-                        // document.getElementById("result-quote").innerText = data.quote;
                         document.getElementById("result-summary").innerText = data.summary;
                         document.getElementById("result-overall").innerText = data.overallScore;
                         document.documentElement.style.setProperty("--overall", data.overallScore * 10)
+
+                        var resultQuote = ""
+                        if (data.overallScore >= 7) {
+                            resultQuote = "This site takes privacy seriously"
+                        } else if (data.overallScore >= 4) {
+                            resultQuote = "Privacy here is alright"
+                        } else {
+                            resultQuote = "Your data is at risk"
+                        }
+
+                        document.getElementById("result-quote").innerText = resultQuote;
 
                         document.getElementById("result-sub-1").innerText = data.subScores[0];
                         document.documentElement.style.setProperty("--bar-score-1", data.subScores[0] * 10 + "%")
@@ -134,13 +144,24 @@ document.addEventListener('DOMContentLoaded', function () {
                                     displayError()
                                     document.getElementById("error-text").innerText = "There has been an error";
                                 } else {
+                                    hasResult = true
                                     displayResults()
-                                    // document.getElementById("result-quote").innerText = data.quote;
                                     document.getElementById("result-summary").innerText = data.summary;
 
                                     var totalScore = calculateTotalScore(data.subscore_user, data.subscore_data, data.subscore_network, data.subscore_ads);
                                     document.getElementById("result-overall").innerText = totalScore
                                     document.documentElement.style.setProperty("--overall", totalScore * 10)
+
+                                    var resultQuote = ""
+                                    if (totalScore >= 7) {
+                                        resultQuote = "This site takes privacy seriously"
+                                    } else if (totalScore >= 4) {
+                                        resultQuote = "Privacy here is alright"
+                                    } else {
+                                        resultQuote = "Your data is at risk"
+                                    }
+
+                                    document.getElementById("result-quote").innerText = resultQuote;
 
                                     document.getElementById("result-sub-1").innerText = data.subscore_user;
                                     document.documentElement.style.setProperty("--bar-score-1", data.subscore_user * 10 + "%")
@@ -272,6 +293,7 @@ function expandSummary() {
 }
 
 function displaySetup() {
+    oldSetupList = []
     setupList.forEach((option) => {
         oldSetupList.push(option)
     })
