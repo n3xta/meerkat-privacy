@@ -260,10 +260,11 @@ body {
 .result-top-title {
     color: var(--primary);
     padding: 20px;
+    padding-top: 18px;
     padding-left: 10px;
+    line-height: 130%;
     text-align: right;
-    line-height: 120%;
-    font-size: 25px;
+    font-size: 24px;
     font-weight: 500;
     font-family: Jost, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
@@ -369,11 +370,10 @@ body {
 .summary-title-text {
     color: var(--primary);
     line-height: 100%;
-    font-size: 20px;
+    font-size: 18px;
     font-weight: 500;
     padding: 12px;
-    padding-right: 0%;
-    padding-bottom: 8px;
+    padding-bottom: 10px;
     font-family: Jost, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
 
@@ -382,9 +382,7 @@ body {
     border: none;
     background: none;
     cursor: pointer;
-    padding: 18px;
-    padding-right: 16px;
-    padding-bottom: 14px;
+    padding: 16px;
 
     transition: opacity 0.25s ease-in-out;
 }
