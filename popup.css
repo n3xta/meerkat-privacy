@@ -72,7 +72,7 @@ body {
     margin-right: 15px;
     margin-bottom: 15px;
     background: linear-gradient(90deg, var(--tint-background) 0%, var(--tint-background) 50%, var(--primary-invert) 100%);
-    background-size: 200% 100%;
+    background-size: 250% 100%;
 
     transition: 0.5s ease-in-out;
 }
@@ -305,7 +305,8 @@ body {
     margin-top: 10px;
 
     border-radius: 12px;
-    border: 1px solid var(--quaternary-gray);
+    background: linear-gradient(90deg, var(--light-background-1) 0%, var(--light-background-2) 100%);
+    /* border: 1px solid var(--quaternary-gray); */
 
     transition: 0.25s ease-in-out;
 }
