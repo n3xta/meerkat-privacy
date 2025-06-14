@@ -127,7 +127,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     chrome.storage.local.get("options", (data) => {
                         const userPreferences = data.options || [];
                         displayLoading()
-                        fetch('http://64.227.2.159:5000/crawl_and_summarize', {
+                        fetch('http://api.meerkat.com/crawl_and_summarize', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json'
